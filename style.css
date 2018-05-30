@@ -1,0 +1,37 @@
+
+.wrapper {
+    height: 100vh;
+    display: flex;
+
+    /* Direction of the items, can be row or column */
+    flex-direction: column;
+}
+
+.home-wrapper{
+	padding-top: 1%;
+	padding-bottom: 1%;
+	padding-left: 5%;
+	padding-right: 5%;
+}
+
+.header-wraper{
+	height: 30px;
+}
+
+.footer-wrapper{
+	height: 30px;
+}
+
+.login-wrapper{
+	position: absolute;
+	right: 5px;
+	top: 12%;
+}
+
+.error-message{
+	color: red;
+}
+
+.success-message{
+	color: green;
+}
