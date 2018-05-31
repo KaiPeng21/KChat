@@ -6,16 +6,20 @@ if (isset($_POST['login'])) {
 	include 'dbh.inc.php';
 	include 'tool.inc.php';
 
-	$uid = mysqli_real_escape_string($conn_users, $_POST['uid']);
-	$password = mysqli_real_escape_string($conn_users, $_POST['password']);
+	$uid = mysqli_real_escape_string($conn, $_POST['uid']);
+	$password = mysqli_real_escape_string($conn, $_POST['password']);
 
 	if (empty($uid) || empty($password)) {
 		header("Location: ../index.php?login=empty");
 		exit();
 	} else {
+
+		
+		
 		$sql = "SELECT * FROM users WHERE uid='$uid'";
-		$result = mysqli_query($conn_users, $sql);
+		$result = mysqli_query($conn, $sql);
 		$rows = mysqli_num_rows($result);
+		
 		if ($rows < 1) {
 			header("Location: ../index.php?login=error");
 			exit();

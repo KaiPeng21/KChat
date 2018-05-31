@@ -22,8 +22,8 @@ echo "<center><p>Last Modified: $lastModified</p></center>";
 
 ?>
 
-</footer>
 
+</footer>
 
 </body>
 </html>

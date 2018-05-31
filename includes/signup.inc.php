@@ -5,12 +5,12 @@ if (isset($_POST['signup'])) {
 	include 'tool.inc.php';
 
 	// access signup info from post method
-	$first = mysqli_real_escape_string($conn_users, $_POST['first']);
-	$last = mysqli_real_escape_string($conn_users, $_POST['last']);
-	$email = mysqli_real_escape_string($conn_users, $_POST['email']);
-	$uid = mysqli_real_escape_string($conn_users, $_POST['username']);
-	$pass = mysqli_real_escape_string($conn_users, $_POST['password']);
-	$pass2 = mysqli_real_escape_string($conn_users, $_POST['password2']);
+	$first = mysqli_real_escape_string($conn, $_POST['first']);
+	$last = mysqli_real_escape_string($conn, $_POST['last']);
+	$email = mysqli_real_escape_string($conn, $_POST['email']);
+	$uid = mysqli_real_escape_string($conn, $_POST['username']);
+	$pass = mysqli_real_escape_string($conn, $_POST['password']);
+	$pass2 = mysqli_real_escape_string($conn, $_POST['password2']);
 	
 	
 
@@ -34,7 +34,7 @@ if (isset($_POST['signup'])) {
 	} else {
 
 		$sql = "SELECT * FROM users WHERE uid='$uid' OR email='$email'";
-		$result = mysqli_query($conn_users, $sql);
+		$result = mysqli_query($conn, $sql);
 		$rows = mysqli_num_rows($result);
 
 		if ($rows > 0){
@@ -47,7 +47,7 @@ if (isset($_POST['signup'])) {
 
 			$sql = "INSERT INTO users(uid, firstname, lastname, email, pwd) VALUES ('$uid', '$first', '$last', '$email', '$passHash')";
 
-			mysqli_query($conn_users, $sql);
+			mysqli_query($conn, $sql);
 			header("Location: ../signup.php?signup=success");
 			exit();
 		}
@@ -114,7 +114,7 @@ if (isset($_POST['signup'])) {
 	} 
 
 	$sql = "SELECT * FROM users WHERE uid='$uid' OR email='$email'";
-	$result = mysqli_query($conn_users, $sql);
+	$result = mysqli_query($conn, $sql);
 	$rows = mysqli_num_rows($result);
 	if (empty($uid)){
 		$getParam['signup'][] = 'empty';
@@ -134,7 +134,7 @@ if (isset($_POST['signup'])) {
 
 		$sql = "INSERT INTO users(uid, firstname, lastname, email, pwd) VALUES ('$uid', '$first', '$last', '$email', '$passHash')";
 
-		mysqli_query($conn_users, $sql);
+		mysqli_query($conn, $sql);
 		header("Location: ../signup.php?signup=success");
 		exit();
 	} else {
