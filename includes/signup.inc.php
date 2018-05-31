@@ -84,10 +84,10 @@ if (isset($_POST['signup'])) {
 		if ($passthrough == True){
 
 			// hash password and insert signup info to database
-			$passHash = password_hash($pass, PASSWORD_DEFAULT);t
+			$passHash = password_hash($pass, PASSWORD_DEFAULT);
 
 			// insert user info to database
-			$sql = "INSERT INTO users(uid, firstname, lastname, email, pwd) VALUES (?, ?, ?, ?, ?);";
+			$sql = "INSERT INTO users (uid, firstname, lastname, email, pwd) VALUES (?, ?, ?, ?, ?)";
 			$stmt = mysqli_stmt_init($conn);
 			if (mysqli_stmt_prepare($stmt, $sql)){
 				mysqli_stmt_bind_param($stmt, 'sssss', $uid, $first, $last, $email, $passHash);
@@ -98,7 +98,7 @@ if (isset($_POST['signup'])) {
 			}
 		} else {
 
-			// if any info is invalid, append valid part to the url so the user doesn't have to re-type the valid info
+			// if any info is invalid, append valid part to the url so the user doesn't have to re-type the valid parts again
 			foreach ($getParam as $key => $value) {
 				$val = join('-', $value);
 				if (!empty($val)) {
