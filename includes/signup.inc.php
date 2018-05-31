@@ -11,50 +11,6 @@ if (isset($_POST['signup'])) {
 	$uid = mysqli_real_escape_string($conn, $_POST['username']);
 	$pass = mysqli_real_escape_string($conn, $_POST['password']);
 	$pass2 = mysqli_real_escape_string($conn, $_POST['password2']);
-	
-	
-
-	// error validation
-	/*
-	if (empty($first) || empty($last) || empty($email) || empty($uid) || empty($pass) || empty($pass2)) {
-		header("Location: ../signup.php?signup=empty");
-		exit();
-	} elseif (!preg_match("/^[a-zA-Z'-]/", $first)) {
-		header("Location: ../signup.php?signup=invalidfirstname");
-		exit();
-	} elseif (!preg_match("/^[a-zA-Z'-]/", $last)) {
-		header("Location: ../signup.php?signup=invalidlastname&first=$first");
-		exit();
-	} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-		header("Location: ../signup.php?signup=invalidemail&first=$first&last=$last");
-		exit();
-	} elseif ($pass != $pass2) {
-		header("Location: ../signup.php?signup=password&first=$first&last=$last&email=$email");
-		exit();
-	} else {
-
-		$sql = "SELECT * FROM users WHERE uid='$uid' OR email='$email'";
-		$result = mysqli_query($conn, $sql);
-		$rows = mysqli_num_rows($result);
-
-		if ($rows > 0){
-			header("Location: ../signup.php?signup=usertaken&first=$first&last=$last&email=$email");
-			exit();
-		} else{
-
-			// hash password and insert signup info to database
-			$passHash = password_hash($pass, PASSWORD_DEFAULT);
-
-			$sql = "INSERT INTO users(uid, firstname, lastname, email, pwd) VALUES ('$uid', '$first', '$last', '$email', '$passHash')";
-
-			mysqli_query($conn, $sql);
-			header("Location: ../signup.php?signup=success");
-			exit();
-		}
-
-	}
-	*/
-
 
 	// initialize header location
 	$headerloc = "../signup.php";
@@ -63,90 +19,96 @@ if (isset($_POST['signup'])) {
 	$passthrough = True;
 	$getParam = array();
 
-	/*
-	if (empty($first) || empty($last) || empty($email) || empty($uid) || empty($pass) || empty($pass2)) {
-		//$headerloc = addGetParaToURL($headerloc, 'signup', 'empty');
-		$getParam['signup'][] = 'empty';
-		$passthrough = False;
-	}
-	*/
-
+	// validate first name
 	if (empty($first)){
 		$getParam['signup'][] = 'empty';
 		$passthrough = False;
 	} elseif (!preg_match("/^[a-zA-Z'-]/", $first)) {
-		//header("Location: ../signup.php?signup=invalidfirstname");
 		$getParam['signup'][] = 'invalidfirstname';
 		$passthrough = False;
 	} else {
 		$getParam['first'][] = $first;
 	}
 
+	// validate last name
 	if (empty($last)){
 		$getParam['signup'][] = 'empty';
 		$passthrough = False;
 	} elseif (!preg_match("/^[a-zA-Z'-]/", $last)) {
-		//header("Location: ../signup.php?signup=invalidlastname&first=$first");
 		$getParam['signup'][] = 'invalidlastname';
 		$passthrough = False;
 	} else {
 		$getParam['last'][] = $last;
 	}
 
+	// validate email
 	if (empty($email)){
 		$getParam['signup'][] = 'empty';
 		$passthrough = False;
 	} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-		//header("Location: ../signup.php?signup=invalidemail&first=$first&last=$last");
 		$getParam['signup'][] = 'invalidemail';
 		$passthrough = False;
 	} else {
 		$getParam['email'][] = $email;
 	}
 
+	// validate password
 	if (empty($pass) || empty($pass2)){
 		$getParam['signup'][] = 'empty';
 		$passthrough = False;
 	} elseif (!empty($pass) && !empty($pass2) && $pass != $pass2) {
-		//header("Location: ../signup.php?signup=password&first=$first&last=$last&email=$email");
 		$getParam['signup'][] = 'password';
 		$passthrough = False;
 	} 
 
-	$sql = "SELECT * FROM users WHERE uid='$uid' OR email='$email'";
-	$result = mysqli_query($conn, $sql);
-	$rows = mysqli_num_rows($result);
-	if (empty($uid)){
-		$getParam['signup'][] = 'empty';
-		$passthrough = False;
-	} elseif ($rows > 0){
-		//header("Location: ../signup.php?signup=usertaken&first=$first&last=$last&email=$email");
-		$getParam['signup'][] = 'usertaken';
-		$passthrough = False;
-	}  else {
-		$getParam['username'][] = $uid;
-	}
 
-	if ($passthrough == True){
+	// validate unique user id
+	$sql = "SELECT * FROM users WHERE uid=? OR email=?";
+	$stmt = mysqli_stmt_init($conn);
+	if (mysqli_stmt_prepare($stmt, $sql)){
+		mysqli_stmt_bind_param($stmt, 'ss', $uid, $email);
+		mysqli_stmt_execute($stmt);
+		$result = mysqli_stmt_get_result($stmt);
 
-		// hash password and insert signup info to database
-		$passHash = password_hash($pass, PASSWORD_DEFAULT);
-
-		$sql = "INSERT INTO users(uid, firstname, lastname, email, pwd) VALUES ('$uid', '$first', '$last', '$email', '$passHash')";
-
-		mysqli_query($conn, $sql);
-		header("Location: ../signup.php?signup=success");
-		exit();
-	} else {
-
-		foreach ($getParam as $key => $value) {
-			$val = join('-', $value);
-			if (!empty($val)) {
-				$headerloc = addGetParaToURL($headerloc, $key, $val);
-			}
+		$rows = mysqli_num_rows($result);
+		if (empty($uid)){
+			$getParam['signup'][] = 'empty';
+			$passthrough = False;
+		} elseif ($rows > 0){
+			$getParam['signup'][] = 'usertaken';
+			$passthrough = False;
+		}  else {
+			$getParam['username'][] = $uid;
 		}
 
-		header("Location: ".$headerloc);
+		if ($passthrough == True){
+
+			// hash password and insert signup info to database
+			$passHash = password_hash($pass, PASSWORD_DEFAULT);t
+
+			// insert user info to database
+			$sql = "INSERT INTO users(uid, firstname, lastname, email, pwd) VALUES (?, ?, ?, ?, ?);";
+			$stmt = mysqli_stmt_init($conn);
+			if (mysqli_stmt_prepare($stmt, $sql)){
+				mysqli_stmt_bind_param($stmt, 'sssss', $uid, $first, $last, $email, $passHash);
+				mysqli_stmt_execute($stmt);
+
+				header("Location: ../signup.php?signup=success");
+				exit();
+			}
+		} else {
+
+			// if any info is invalid, append valid part to the url so the user doesn't have to re-type the valid info
+			foreach ($getParam as $key => $value) {
+				$val = join('-', $value);
+				if (!empty($val)) {
+					$headerloc = addGetParaToURL($headerloc, $key, $val);
+				}
+			}
+
+			header("Location: ".$headerloc);
+		}
+
 	}
 
 } else{

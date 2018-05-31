@@ -121,7 +121,7 @@
 	<?php
 		if ($signupCheck == "success") {
 			echo "<p class='success-message'>You have been signed up</p>";
-			exit();
+			
 		}
 	?>
 
