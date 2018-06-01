@@ -32,8 +32,13 @@
             ?>
 
             <div id="chat">
-                <div id="msg-content">
-                    
+                <div class="well well-lg">
+                </div>
+                <div class="input-group">
+                    <textarea class="form-control" style="resize:none" id="msg" name="message" rows="1" placeholder="Add your comment here..."></textarea>                        
+                    <div class="input-group-btn">
+                        <button class="btn btn-default"><i class="glyphicon glyphicon-send"></i></button>
+                    </div>
                 </div>
             </div>
 
