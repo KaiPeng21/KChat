@@ -5,7 +5,8 @@
 	<title>KChat</title>
 	<meta charset="utf-8">
   	<meta name="viewport" content="width=device-width, initial-scale=1">
-  	<link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="message.css">  
   	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -32,12 +33,22 @@
             ?>
 
             <div id="chat">
-                <div class="well well-lg">
+                <div id="chat-display">
+                    <ul class="message-block">
+                        <li class="other">A message From other people!</li>
+                        <li class="self">A message 1</li>
+                        <li class="self">A message 2</li>
+                        <li class="self">A message 3</li>
+                        <li class="other">A message 2 From other people!</li>
+                        
+                    </ul>
                 </div>
-                <div class="input-group">
-                    <textarea class="form-control" style="resize:none" id="msg" name="message" rows="1" placeholder="Add your comment here..."></textarea>                        
-                    <div class="input-group-btn">
-                        <button class="btn btn-default"><i class="glyphicon glyphicon-send"></i></button>
+                <div id="chat-input">
+                    <div class="input-group">
+                        <textarea class="form-control" style="resize:none" id="msg" name="message" rows="1" placeholder="Add your comment here..."></textarea>                        
+                        <div class="input-group-btn">
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-send"></i></button>
+                        </div>
                     </div>
                 </div>
             </div>
