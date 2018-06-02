@@ -34,7 +34,7 @@
 
             <div id="chat">
                 <div id="chat-display">
-                    <ul class="message-block">
+                    <ul id="message-block" class="message-block">
 
                     <!-- sample format: message block will be added from JS/chat.js
                         <li class="other">
@@ -54,7 +54,7 @@
                     <div class="input-group">
                         <textarea class="form-control" style="resize:none" id="msg" name="message" rows="1" placeholder="Add your comment here..."></textarea>                        
                         <div class="input-group-btn">
-                            <button class="btn btn-default"><i class="glyphicon glyphicon-send"></i></button>
+                            <button id="msg-send-btn" class="btn btn-default"><i class="glyphicon glyphicon-send"></i></button>
                         </div>
                     </div>
                 </div>

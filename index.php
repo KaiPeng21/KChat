@@ -22,7 +22,8 @@
 
 	<?php
 		if (isset($_SESSION['u_uid'])) {
-			echo "<p>You are logged in as ".$_SESSION['u_uid']."</p>";
+			header("Location: chat.php");
+			// echo "<p>You are logged in as ".$_SESSION['u_uid']."</p>";
 		} else {
 			echo "<p>You are logged out. Login or <a href='signup.php'>signup</a> an account</p>";
 		}
