@@ -9,54 +9,82 @@ ul.message-block li{
     clear: both;
     padding: 3px;
     border-radius: 3px;
-    margin-bottom: 1px;
+    margin-top: 1px;
     font-family: Helvetica, Arial, sans-serif;
 }
 
 .other{
     background: #eee;
     float: left;
+    max-width: 60%;
+    margin-left: 2px;
 }
 
 .self{
-    background: #0084ff;
+    background: #5bc0de;
     float: right;
     color: #fff;
+    max-width: 60%;
+    margin-right: 2px;
 }
 
 .other + .self{
-    border-bottom-right-radius: 1px;
+    border-bottom-right-radius: 2px;
 }
 
 .self + .other{
-    border-top-right-radius: 1px;
-    border-bottom-right-radius: 1px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
 }
 
 .self + .self{
-    border-top-right-radius: 1px;
-    border-bottom-right-radius: 1px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
 }
 
 .self:last-of-type{
     border-bottom-right-radius: 6px;
 }
 
+
+.other .msg-name{
+    color: darkolivegreen;
+    padding: 0;
+    margin: 0;
+    font-size: smaller;
+}
+
+.other .msg-time{
+    color: darkslategrey;
+    padding-top: 2px;
+    margin: 0;
+    float: right;
+    font-size: xx-small;
+}
+
+.self .msg-time{
+    color: white;
+    padding-top: 2px;
+    margin: 0;
+    float: left;
+    font-size: xx-small;
+}
+
 #chat{
     position: absolute;
     height: 70%;
-    width: 80%;
-    border: 2px solid blue;
+    width: 90%;
 }
 
 #chat-input{
     height: 10%;
     width: 100%;
-    border: 2px solid red;
 }
 
 #chat-display{
     height: 90%;
     width: 100%;
-    border: 2px solid green;
+    border-radius: 5px;
+    border: 1px solid lightgray;
+    overflow: scroll;
 }

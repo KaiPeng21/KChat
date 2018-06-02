@@ -35,12 +35,19 @@
             <div id="chat">
                 <div id="chat-display">
                     <ul class="message-block">
-                        <li class="other">A message From other people!</li>
-                        <li class="self">A message 1</li>
-                        <li class="self">A message 2</li>
-                        <li class="self">A message 3</li>
-                        <li class="other">A message 2 From other people!</li>
-                        
+
+                    <!-- sample format: message block will be added from JS/chat.js
+                        <li class="other">
+                            <span class="msg-name">Killua Zoldyck</span><br>
+                            <span>A message From other people!</span><br>
+                            <span class="msg-time">2018/06/01 09:12 pm</span>
+                        </li>
+                        <li class="self">
+                            <span>A message From other people!</span><br>
+                            <span class="msg-time">2018/06/01 09:12 pm</span>
+                        </li>
+                    -->
+
                     </ul>
                 </div>
                 <div id="chat-input">
@@ -65,7 +72,7 @@
 </div>
 
 <?php
-	include_once 'footer.php';
+	//include_once 'footer.php';
 ?>
 
 </div>
