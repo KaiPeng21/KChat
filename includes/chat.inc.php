@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'dbh.inc.php';
+require 'dbh.inc.php';
 
 if (!isset($_SESSION['u_uid'])){
     header("Location: ../index.php");
@@ -11,8 +11,7 @@ if (isset($_POST['method']) && !empty($_POST['method']) && isset($_POST['timesta
 
     // getting message 
     if ($_POST['method'] == 'getMessages'){
-        
-        
+
         // testing..........
         $response = array(
             'msg' => 'testing message content',
@@ -28,31 +27,83 @@ if (isset($_POST['method']) && !empty($_POST['method']) && isset($_POST['timesta
     // push a message to the database
     } elseif ($_POST['method'] == 'pushMessage'){
 
-        if (isset($_POST['message']) && !empty($_POST['message'])){
-
-            $content = trim($_POST['message']);
-            $uid = $_SESSION['u_uid'];
-            
-            $conn = db_connect();
-            if ($conn === false){
-                exit();
-            }
-
-            $sql = "INSERT INTO messages (`uid`, `content`) VALUES ('.$uid.', '.$content.');";
-
-            $res = mysqli_query($conn, $sql);
-
+        // message was not sended but pushMessage method was triggered
+        if (!isset($_POST['message']) || empty($_POST['message'])){
             $response = array(
-                'statusCode' => 0,
-                'statusMsg' => $sql
+                'statusCode' => 3,
+                'statusMsg' => 'FAILED:POSTERR'
             );
-    
-            // if success, respond message to JS/chat.js
             header('Content-Type: application/json');
             echo json_encode($response);
+            die();
 
-            mysqli_close($conn);
-            die();            
+        } else {
+
+            // connect to database
+            $conn = db_connect();
+            if ($conn === false){
+                $response = array(
+                    'statusCode' => 1,
+                    'statusMsg' => 'FAILED:DBERROR'
+                );
+                header('Content-Type: application/json');
+                echo json_encode($response);
+                die();
+            }
+
+            // retrieve content and uid info
+            $content = trim(mysqli_real_escape_string($conn, $_POST['message']));
+            $uid = $_SESSION['u_uid'];
+
+            // ignore empty messages
+            if (empty($content)){
+                $response = array(
+                    'statusCode' => 0,
+                    'statusMsg' => 'EMPTYMSG'
+                );
+                header('Content-Type: application/json');
+                echo json_encode($response);
+                mysqli_close($conn);
+                die(); 
+            }
+
+            // prepare statement for database insertion
+            $stmt = mysqli_stmt_init($conn);
+            $sql = "INSERT INTO `messages` (`uid`, `content`) VALUES (?, ?);";
+            if (!mysqli_stmt_prepare($stmt, $sql)){
+                $response = array(
+                    'statusCode' => 2,
+                    'statusMsg' => 'FAILED:SQLERR'
+                );
+                header('Content-Type: application/json');
+                echo json_encode($response);
+                mysqli_close($conn);
+                die();
+            } else {
+                // bind sql parameters and execute
+                mysqli_stmt_bind_param($stmt, 'ss', $uid, $content);
+                mysqli_stmt_execute($stmt);
+
+                if (mysqli_affect_rows($conn) != 1){
+                    $response = array(
+                        'statusCode' => 2,
+                        'statusMsg' => 'FAILED:SQLERR'
+                    );
+                    header('Content-Type: application/json');
+                    echo json_encode($response);
+                    mysqli_close($conn);
+                    die();        
+                } else {
+                    $response = array(
+                        'statusCode' => 0,
+                        'statusMsg' => 'SUCCESS'
+                    );
+                    header('Content-Type: application/json');
+                    echo json_encode($response);
+                    mysqli_close($conn);
+                    die();        
+                }
+            }    
         }
 
     }

@@ -48,9 +48,10 @@ $('#msg-send-btn').click(function(event){
         success: function(data){
             // getting a response from includes/chat.inc.php
             // if success, trigger getMessages immediately
+            $('#message-form').reset();
             if (data.statusCode == 0){
-                // chat.getMessages();
-                alert(data.statusMsg);
+                chat.getMessages();
+                
             }
         }
     });

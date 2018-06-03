@@ -12,7 +12,7 @@ create table IF NOT EXISTS users(
 /* message database */
 create table IF NOT EXISTS messages(
     id int(11) not null AUTO_INCREMENT PRIMARY KEY,
-    content varchar(256) DEFAULT not null,
+    content text not null,
     uid varchar(256) not null,
     time timestamp not null DEFAULT CURRENT_TIMESTAMP
 );
