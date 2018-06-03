@@ -1,6 +1,7 @@
 <?php
 session_start();
 require 'dbh.inc.php';
+require 'tool.inc.php';
 
 if (!isset($_SESSION['u_uid'])){
     header("Location: ../index.php");
@@ -12,13 +13,44 @@ if (isset($_POST['method']) && !empty($_POST['method']) && isset($_POST['timesta
     // getting message 
     if ($_POST['method'] == 'getMessages'){
 
+        // connect to database
+        $conn = db_connect();
+        if ($conn === false){
+            $response = array(
+                'statusCode' => 1,
+                'statusMsg' => 'FAILED:DBERR'
+            );
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            die();
+        }
+
+        // validate timestamp
+        $timestamp = mysqli_real_escape_string($conn, $_POST['timestamp']);
+        $timestamp = validate_timestamp($timestamp);
+
+        $sql = '';
+        // after reloading, query all the messages
+        if ($timestamp === false){
+            $sql = "SELECT `users`.`uid`, `firstname`, `lastname`, `content`, `time` FROM `users` INNER JOIN `messages` ON `messages`.`uid` = `users`.`uid` ORDER BY `time` DESC";
+        // get all messages newer than the timestamp
+        } else {
+    
+        }
+    
+        // execute sql
+    
+        // update the last timestamp
+        
+        
+        // update messages
+
         // testing..........
         $response = array(
             'msg' => 'testing message content',
             'statusCode' => 1,
             'statusMsg' => 'SUCCESS'
         );
-
         // if success, respond message to JS/chat.js
         header('Content-Type: application/json');
         echo json_encode($response);

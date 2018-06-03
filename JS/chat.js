@@ -51,7 +51,6 @@ $('#msg-send-btn').click(function(event){
             $('#message-form').reset();
             if (data.statusCode == 0){
                 chat.getMessages();
-                
             }
         }
     });
