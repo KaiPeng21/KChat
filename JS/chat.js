@@ -35,22 +35,38 @@ var chat = {};
 
 // when the send button is pressed, push message content to database
 $('#msg-send-btn').click(function(event){
-    alert('debug');
 
-
+    // reference to the message content textarea
+    chat.messageContent = $('#message-content').val();
+    
+    // send timestamp and message content to includes/chat.inc.php for updating the message database
+    $.ajax({
+        url: 'includes/chat.inc.php',
+        type: 'post',
+        dataType: 'json',
+        data: {method: 'pushMessage', timestamp: chat.lastMsgTimestamp, message: chat.messageContent},
+        success: function(data){
+            // getting a response from includes/chat.inc.php
+            // if success, trigger getMessages immediately
+            if (data.statusCode == 0){
+                // chat.getMessages();
+                alert(data.statusMsg);
+            }
+        }
+    });
 });
 
 //  getting message slot
 chat.getMessages = function() {
 
-    // send message timestamp to includes/chat.inc.js through ajax
+    // send message timestamp to includes/chat.inc.php through ajax
     $.ajax({
         url: 'includes/chat.inc.php',
         type: 'post',
         dataType: 'json',
         data: {method: 'getMessages', timestamp: chat.lastMsgTimestamp},
         success: function(data){
-            // getting a response from includes/chat.inc.js
+            // getting a response from includes/chat.inc.php
             // if success, append message
 
             if (data.statusCode == 0){

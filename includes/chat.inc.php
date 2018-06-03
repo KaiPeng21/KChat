@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'chatfunc.inc.php';
+include 'dbh.inc.php';
 
 if (!isset($_SESSION['u_uid'])){
     header("Location: ../index.php");
@@ -17,7 +17,7 @@ if (isset($_POST['method']) && !empty($_POST['method']) && isset($_POST['timesta
         $response = array(
             'msg' => 'testing message content',
             'statusCode' => 1,
-            'statusMsg' => 'SUCCESS',
+            'statusMsg' => 'SUCCESS'
         );
 
         // if success, respond message to JS/chat.js
@@ -26,8 +26,34 @@ if (isset($_POST['method']) && !empty($_POST['method']) && isset($_POST['timesta
         die();
 
     // push a message to the database
-    } elseif ($_POST['method'] == 'pushMessages'){
+    } elseif ($_POST['method'] == 'pushMessage'){
 
+        if (isset($_POST['message']) && !empty($_POST['message'])){
+
+            $content = trim($_POST['message']);
+            $uid = $_SESSION['u_uid'];
+            
+            $conn = db_connect();
+            if ($conn === false){
+                exit();
+            }
+
+            $sql = "INSERT INTO messages (`uid`, `content`) VALUES ('.$uid.', '.$content.');";
+
+            $res = mysqli_query($conn, $sql);
+
+            $response = array(
+                'statusCode' => 0,
+                'statusMsg' => $sql
+            );
+    
+            // if success, respond message to JS/chat.js
+            header('Content-Type: application/json');
+            echo json_encode($response);
+
+            mysqli_close($conn);
+            die();            
+        }
 
     }
 

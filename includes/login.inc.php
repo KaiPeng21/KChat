@@ -6,6 +6,13 @@ if (isset($_POST['login'])) {
 	include 'dbh.inc.php';
 	include 'tool.inc.php';
 
+	// connect to database
+	$conn = db_connect();
+	if ($conn === false){
+		header("Location: ../index.php?login=dberror");
+		exit();
+	}
+
 	// get user id and password from the input form
 	$uid = mysqli_real_escape_string($conn, $_POST['uid']);
 	$password = mysqli_real_escape_string($conn, $_POST['password']);
@@ -13,6 +20,7 @@ if (isset($_POST['login'])) {
 	// check if any field is empty
 	if (empty($uid) || empty($password)) {
 		header("Location: ../index.php?login=empty");
+		mysqli_close($conn);
 		exit();
 	} else {
 
@@ -31,6 +39,7 @@ if (isset($_POST['login'])) {
 			if ($rows < 1) {
 				// error: the userid is not in the database
 				header("Location: ../index.php?login=error");
+				mysqli_close($conn);
 				exit();
 			} else {
 				if ($row = mysqli_fetch_assoc($result)){
@@ -46,11 +55,13 @@ if (isset($_POST['login'])) {
 						$_SESSION['u_email'] = $row['email'];
 
 						header("Location: ../index.php?login=success");
+						mysqli_close($conn);
 						exit();
 
 					} else {
 						// incorrect password
 						header("Location: ../index.php?login=error");
+						mysqli_close($conn);
 						exit();
 					}
 				}

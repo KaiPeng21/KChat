@@ -1,6 +1,7 @@
-<?php
 
-require 'dbh.inc.php';
+<?php
+/*
+include 'dbh.inc.php';
 
 function getMessages($timestamp){
 
@@ -24,13 +25,17 @@ function getMessages($timestamp){
 
 }
 
-function pushMessages($raw){
+function pushMessage($uid, $raw){
 
+    /*
     // create a sql template
-    $sql = 'INSERT INTO message (content, uid) VALUES(?, ?)';
+    $sql = 'INSERT INTO messages (content, uid) VALUES(?, ?)';
     $content = mysqli_real_escape_string($conn, $raw);
     $uid = $_SESSION['u_uid'];
+    //$sql = "INSERT INTO messages (content, uid) VALUES ($content, $uid)";
+    //mysqli_query($conn, $sql);
 
+    
     // push the user id and message content into database
     $stmt = mysqli_stmt_init($conn);
     if (mysqli_stmt_prepare($stmt)){
@@ -45,6 +50,19 @@ function pushMessages($raw){
     } else {
         return false;
     }
+    
+
+
+
+    $content = trim($raw);
+    $sql = "INSERT INTO messages (`content`, `uid`) VALUES ($content, $uid)";
+    
+    mysqli_query($conn, $sql);
 
     return true;
+
+    
+    
 }
+
+*/

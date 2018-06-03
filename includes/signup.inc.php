@@ -4,6 +4,13 @@ if (isset($_POST['signup'])) {
 	include 'dbh.inc.php';
 	include 'tool.inc.php';
 
+	// connect to database
+	$conn = db_connect();
+	if ($conn === false){
+		header("Location: ../signup.php?signup=dberror");
+		exit();
+	}
+
 	// access signup info from post method
 	$first = mysqli_real_escape_string($conn, $_POST['first']);
 	$last = mysqli_real_escape_string($conn, $_POST['last']);
@@ -94,6 +101,7 @@ if (isset($_POST['signup'])) {
 				mysqli_stmt_execute($stmt);
 
 				header("Location: ../signup.php?signup=success");
+				mysqli_close($conn);
 				exit();
 			}
 		} else {
@@ -107,6 +115,8 @@ if (isset($_POST['signup'])) {
 			}
 
 			header("Location: ".$headerloc);
+			mysqli_close($conn);
+			exit();
 		}
 
 	}

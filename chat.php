@@ -52,7 +52,7 @@
                 </div>
                 <div id="chat-input">
                     <div class="input-group">
-                        <textarea class="form-control" style="resize:none" id="msg" name="message" rows="1" placeholder="Add your comment here..."></textarea>                        
+                        <textarea id="message-content" class="form-control" style="resize:none" rows="1" placeholder="Add your comment here..."></textarea>                        
                         <div class="input-group-btn">
                             <button id="msg-send-btn" class="btn btn-default"><i class="glyphicon glyphicon-send"></i></button>
                         </div>
