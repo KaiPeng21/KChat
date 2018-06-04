@@ -48,16 +48,18 @@ $('#msg-send-btn').click(function(event){
         success: function(data){
             // getting a response from includes/chat.inc.php
             // if success, trigger getMessages immediately
+            /*
             $('#message-form').reset();
             if (data.statusCode == 0){
                 chat.getMessages();
-            }
+            }*/
         }
     });
 });
 
 //  getting message slot
 chat.getMessages = function() {
+
 
     // send message timestamp to includes/chat.inc.php through ajax
     $.ajax({
@@ -69,10 +71,12 @@ chat.getMessages = function() {
             // getting a response from includes/chat.inc.php
             // if success, append message
 
-            if (data.statusCode == 0){
-                var msgBlk = createMessageBlock(data.msg, 'self', '', '', '');
-                $('#message-block').append(msgBlk);
+            console.log("DEBUGGING data: " + data.msgContent);
 
+            if (data.statusCode == 0){
+                // var msgBlk = createMessageBlock(data.msg, 'self', '', '', '');
+                console.log(data.msgContent);
+                // $('#message-block').append(data.msgContent);
             }
             
         }

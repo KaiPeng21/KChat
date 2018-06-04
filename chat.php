@@ -51,14 +51,12 @@
                     </ul>
                 </div>
                 <div id="chat-input">
-                    <form id="message-form">
                     <div class="input-group">
                         <textarea id="message-content" class="form-control" style="resize:none" rows="1" placeholder="Add your comment here..."></textarea>                        
                         <div class="input-group-btn">
                             <button id="msg-send-btn" class="btn btn-default"><i class="glyphicon glyphicon-send"></i></button>
                         </div>
                     </div>
-                    </form>
                 </div>
             </div>
 

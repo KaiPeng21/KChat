@@ -18,42 +18,95 @@ if (isset($_POST['method']) && !empty($_POST['method']) && isset($_POST['timesta
         if ($conn === false){
             $response = array(
                 'statusCode' => 1,
-                'statusMsg' => 'FAILED:DBERR'
+                'statusMsg' => 'FAILED:DBERR',
+                'lastMsgTimestamp' => '-1',
+                'msgContent' => ''
             );
             header('Content-Type: application/json');
             echo json_encode($response);
             die();
         }
 
+        
+
         // validate timestamp
         $timestamp = mysqli_real_escape_string($conn, $_POST['timestamp']);
-        $timestamp = validate_timestamp($timestamp);
+        //$timestamp = validate_timestamp($timestamp);
 
+        
         $sql = '';
         // after reloading, query all the messages
-        if ($timestamp === false){
+        if ($timestamp == '-1'){
             $sql = "SELECT `users`.`uid`, `firstname`, `lastname`, `content`, `time` FROM `users` INNER JOIN `messages` ON `messages`.`uid` = `users`.`uid` ORDER BY `time` DESC";
         // get all messages newer than the timestamp
         } else {
-    
+            $sql = "SELECT `users`.`uid`, `firstname`, `lastname`, `content`, `time` FROM `users` INNER JOIN `messages` ON `messages`.`uid` = `users`.`uid` WHERE `time` > `$timestamp` ORDER BY `time` DESC";
         }
-    
-        // execute sql
-    
-        // update the last timestamp
-        
-        
-        // update messages
 
-        // testing..........
         $response = array(
-            'msg' => 'testing message content',
             'statusCode' => 1,
-            'statusMsg' => 'SUCCESS'
+            'statusMsg' => 'FAILED:DBERR',
+            'lastMsgTimestamp' => '-1',
+            'msgContent' => $sql
         );
-        // if success, respond message to JS/chat.js
         header('Content-Type: application/json');
         echo json_encode($response);
+        die();
+
+        // execute sql
+        $result = mysqli_query($conn, $sql);
+        // error executing the sql query
+        if ($result === false){
+            $response = array(
+                'statusCode' => 3,
+                'statusMsg' => 'FAILED:SQLERR',
+                'lastMsgTimestamp' => '-1',
+                'msgContent' => ''
+            );
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            mysqli_close($conn);
+            die();
+        }
+        // no message being updated or the message database is empty
+        if (($rows = mysqli_affect_rows($conn)) === 0){
+            $response = array(
+                'statusCode' => 2,
+                'statusMsg' => 'NOMSG',
+                'lastMsgTimestamp' => '-1',
+                'msgContent' => ''
+            );
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            mysqli_close($conn);
+            die();
+        }
+
+        // format the messages
+        $messages = '';
+        for ($i = 0; $i < $rows; $i+=1){
+            $msgarr = mysqli_fetch_assoc($result);
+            $content = $msgarr['content'];
+            $type = 'other';
+            $name = $msgarr['firstname'] . ' ' . $msgarr['lastname'];
+            
+            $messages .= createMessageBlock($content, $type, $name, $timestamp);
+
+            if ($i == 1){
+                $lastMsgTimestamp = $msgarr['time'];
+            }
+        }
+
+        // update messages
+        $response = array(
+            'statusCode' => 0,
+            'statusMsg' => 'SUCCESS',
+            'lastMsgTimestamp' => $lastMsgTimestamp,
+            'msgContent' => $messages
+        );
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        mysqli_close($conn);
         die();
 
     // push a message to the database
