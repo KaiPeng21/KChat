@@ -27,49 +27,37 @@ if (isset($_POST['method']) && !empty($_POST['method']) && isset($_POST['timesta
             die();
         }
 
-        
-
         // validate timestamp
         $timestamp = mysqli_real_escape_string($conn, $_POST['timestamp']);
-        //$timestamp = validate_timestamp($timestamp);
 
-        
         $sql = '';
         // after reloading, query all the messages
         if ($timestamp == '-1'){
-            $sql = "SELECT `users`.`uid`, `firstname`, `lastname`, `content`, `time` FROM `users` INNER JOIN `messages` ON `messages`.`uid` = `users`.`uid` ORDER BY `time` DESC";
+            $sql = "SELECT `users`.`uid`, `firstname`, `lastname`, `content`, `time` FROM `users` INNER JOIN `messages` ON `messages`.`uid` = `users`.`uid` ORDER BY `time`";
         // get all messages newer than the timestamp
         } else {
-            $sql = "SELECT `users`.`uid`, `firstname`, `lastname`, `content`, `time` FROM `users` INNER JOIN `messages` ON `messages`.`uid` = `users`.`uid` WHERE `time` > `$timestamp` ORDER BY `time` DESC";
+            $sql = "SELECT `users`.`uid`, `firstname`, `lastname`, `content`, `time` FROM `users` INNER JOIN `messages` ON `messages`.`uid` = `users`.`uid` WHERE `time` > '$timestamp' ORDER BY `time`";
         }
-
-        $response = array(
-            'statusCode' => 1,
-            'statusMsg' => 'FAILED:DBERR',
-            'lastMsgTimestamp' => '-1',
-            'msgContent' => $sql
-        );
-        header('Content-Type: application/json');
-        echo json_encode($response);
-        die();
 
         // execute sql
         $result = mysqli_query($conn, $sql);
+
         // error executing the sql query
         if ($result === false){
             $response = array(
                 'statusCode' => 3,
                 'statusMsg' => 'FAILED:SQLERR',
                 'lastMsgTimestamp' => '-1',
-                'msgContent' => ''
+                'msgContent' => $sql
             );
             header('Content-Type: application/json');
             echo json_encode($response);
             mysqli_close($conn);
             die();
         }
+
         // no message being updated or the message database is empty
-        if (($rows = mysqli_affect_rows($conn)) === 0){
+        if (($rows = mysqli_affected_rows($conn)) == 0){
             $response = array(
                 'statusCode' => 2,
                 'statusMsg' => 'NOMSG',
@@ -86,15 +74,19 @@ if (isset($_POST['method']) && !empty($_POST['method']) && isset($_POST['timesta
         $messages = '';
         for ($i = 0; $i < $rows; $i+=1){
             $msgarr = mysqli_fetch_assoc($result);
+            $uid = $msgarr['uid'];
             $content = $msgarr['content'];
             $type = 'other';
+            if ($_SESSION['u_uid'] == $uid){
+                $type = 'self';
+            }
+
             $name = $msgarr['firstname'] . ' ' . $msgarr['lastname'];
+            $timestamp = $msgarr['time'];
             
             $messages .= createMessageBlock($content, $type, $name, $timestamp);
 
-            if ($i == 1){
-                $lastMsgTimestamp = $msgarr['time'];
-            }
+            $lastMsgTimestamp = $msgarr['time'];
         }
 
         // update messages
@@ -137,7 +129,8 @@ if (isset($_POST['method']) && !empty($_POST['method']) && isset($_POST['timesta
             }
 
             // retrieve content and uid info
-            $content = trim(mysqli_real_escape_string($conn, $_POST['message']));
+            $_POST['message'] = trim(nl2br($_POST['message']));
+            $content = $_POST['message'];
             $uid = $_SESSION['u_uid'];
 
             // ignore empty messages

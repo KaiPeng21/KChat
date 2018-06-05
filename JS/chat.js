@@ -48,14 +48,21 @@ $('#msg-send-btn').click(function(event){
         success: function(data){
             // getting a response from includes/chat.inc.php
             // if success, trigger getMessages immediately
-            /*
-            $('#message-form').reset();
             if (data.statusCode == 0){
                 chat.getMessages();
-            }*/
+            }
         }
     });
+
+    $('#message-content').val('');
+    //autoScroll();
 });
+
+function autoScroll(){
+    var cd = document.getElementById('chat-display');
+    cd.scrollTop = cd.scrollHeight;
+    console.log("HLLL: " + cd.scrollTop);
+}
 
 //  getting message slot
 chat.getMessages = function() {
@@ -70,13 +77,10 @@ chat.getMessages = function() {
         success: function(data){
             // getting a response from includes/chat.inc.php
             // if success, append message
-
-            console.log("DEBUGGING data: " + data.msgContent);
-
             if (data.statusCode == 0){
-                // var msgBlk = createMessageBlock(data.msg, 'self', '', '', '');
-                console.log(data.msgContent);
-                // $('#message-block').append(data.msgContent);
+                $('#message-block').append(data.msgContent);
+                chat.lastMsgTimestamp = data.lastMsgTimestamp;
+                autoScroll();
             }
             
         }
@@ -84,8 +88,9 @@ chat.getMessages = function() {
 }
 
 // when a page is reloaded, fetch all messages from database, and thus set timestamp to 1
-chat.lastMsgTimestamp = '-1';
+
 
 // update message display per 3 seconds
-chat.interval = setInterval(chat.getMessages, 3000);
+chat.interval = setInterval(chat.getMessages, 1000);
+chat.lastMsgTimestamp = '-1';
 chat.getMessages();

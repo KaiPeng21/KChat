@@ -35,7 +35,7 @@ function createMessageBlock($content, $type, $name, $datetime){
     $msg .= '<span>' . $content . '</span><br>';
     
     if ($datetime != ''){
-        $msg .= '<span class="msg-time">' . $datetime . '/span>';
+        $msg .= '<span class="msg-time">' . $datetime . '</span>';
     }
     $msg .= '</li>';  
     return $msg;
